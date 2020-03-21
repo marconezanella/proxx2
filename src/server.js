@@ -2,6 +2,7 @@
 var express =require( "express");
 var fileUpload = require("express-fileupload");
 var bodyParser = require("body-parser");
+var request = require("request");
 var fs = require("fs");
 var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
 const Gets = require("./gets.js");
