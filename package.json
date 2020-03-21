@@ -23,10 +23,10 @@
     "mobile-detect": "^1.4.4",
     "moment": "^2.24.0",
     "seo-bot-detect": "^1.0.3",
+    "request": "^2.88.2",
     "spider-detector": "^2.0.0"
   },
   "devDependencies": {
-    "request": "^2.88.2",
     "tape": "^4.7.0"
   },
   "repository": {
