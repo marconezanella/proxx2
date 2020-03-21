@@ -110,7 +110,7 @@ server.get("/site_map.xml", (req, res) => {
     url: url_back,
     method: "GET"
   };
-  //   console.log(data);
+    console.log(data);
   request(data, function(error, response, body) {
     if (error || response.statusCode != 200) {
       res.status(500).send(body);

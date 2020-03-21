@@ -9,6 +9,7 @@ var TesteRota = _interopRequireWildcard(_teste_rotas);
 var express = require("express");
 var fileUpload = require("express-fileupload");
 var bodyParser = require("body-parser");
+var request = require("request");
 var fs = require("fs");
 var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
 var Gets = require("./gets.js");
@@ -99,7 +100,7 @@ server.get("/site_map.xml", function (req, res) {
     url: url_back,
     method: "GET"
   };
-  //   console.log(data);
+  console.log(data);
   request(data, function (error, response, body) {
     if (error || response.statusCode != 200) {
       res.status(500).send(body);
