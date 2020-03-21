@@ -1,10 +1,16 @@
 "use strict";
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
 
 var _teste_rotas = require("./teste_rotas");
 
 var TesteRota = _interopRequireWildcard(_teste_rotas);
+
+var _checkoutJs = require("./checkout.js");
+
+var _checkoutJs2 = _interopRequireDefault(_checkoutJs);
 
 var express = require("express");
 var fileUpload = require("express-fileupload");
@@ -113,5 +119,7 @@ server.get("/site_map.xml", function (req, res) {
 });
 
 new Gets(server, url);
+
+new _checkoutJs2["default"](server, url);
 
 server.listen(PORT);

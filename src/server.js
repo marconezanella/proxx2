@@ -9,6 +9,7 @@ const Gets = require("./gets.js");
 const PORT = process.env.PORT || 5000
 var cookieParser = require("cookie-parser");
 import * as TesteRota from "./teste_rotas";
+import Checkout from "./checkout.js";
 
 var server = express();
 server.use(express.static("public"));
@@ -125,6 +126,7 @@ server.get("/site_map.xml", (req, res) => {
 
 new Gets(server, url);
 
+new Checkout(server, url);
 
 
 server.listen(PORT);
