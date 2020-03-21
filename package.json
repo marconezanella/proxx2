@@ -2,7 +2,7 @@
   "name": "node-js-getting-started",
   "version": "0.3.0",
   "description": "A sample Node.js app using Express 4",
-  "main": "index.js",
+  "main": "out/server.js",
   "scripts": {
     "start": "npm run build-server ; npm run monitor",
     "monitor": "node ./out/server.js",
