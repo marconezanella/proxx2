@@ -1,4 +1,3 @@
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
 
 var express =require( "express");
 var fileUpload = require("express-fileupload");
@@ -8,6 +7,7 @@ var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
 const Gets = require("./gets.js");
 const PORT = process.env.PORT || 5000;
 var cookieParser = require("cookie-parser");
+import * as TesteRota from "./teste_rotas";
 
 var server = express();
 server.use(express.static("public"));
