@@ -170,7 +170,7 @@ if (true || url.indexOf("localhost") >= 0) {
     renewBy: 90 * 24 * 60 * 60 * 1000,
     debug: false
   });
-  if (!process.env.PORT) {
+  // if (!process.env.PORT) {
     require("http")
       .createServer(greenlock.middleware(require("redirect-https")()))
       .listen(80, function() {
@@ -185,7 +185,7 @@ if (true || url.indexOf("localhost") >= 0) {
         );
       });
   }
-}
+// } 
 
 function approveDomains(opts, certs, cb) {
   if (certs) {

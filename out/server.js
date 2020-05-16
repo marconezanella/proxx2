@@ -190,15 +190,15 @@ if (true || url.indexOf("localhost") >= 0) {
     renewBy: 90 * 24 * 60 * 60 * 1000,
     debug: false
   });
-  if (!process.env.PORT) {
-    require("http").createServer(greenlock.middleware(require("redirect-https")())).listen(80, function () {
-      console.log("Listening for ACME http-01 challenges on", this.address());
-    });
-    require("https").createServer(greenlock.httpsOptions, greenlock.middleware(server)).listen(443, function () {
-      console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
-    });
-  }
+  // if (!process.env.PORT) {
+  require("http").createServer(greenlock.middleware(require("redirect-https")())).listen(80, function () {
+    console.log("Listening for ACME http-01 challenges on", this.address());
+  });
+  require("https").createServer(greenlock.httpsOptions, greenlock.middleware(server)).listen(443, function () {
+    console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
+  });
 }
+// }
 
 function approveDomains(opts, certs, cb) {
   if (certs) {
