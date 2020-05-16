@@ -86,6 +86,7 @@ export default class Router {
         url: req.headers.host + "/" + caminho,
         full_path: myURL.pathname,
         path: caminho,
+          cookies:req.cookies,
         id_lead: id_lead,
         query: query,
         cidade_data: cidade,

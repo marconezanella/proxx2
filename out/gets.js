@@ -61,7 +61,7 @@ var Router = function Router(server, url_api) {
 
   server.get("/", function (req, res) {
     var caminho = req.params.caminho;
-    console.log("caminho");
+    // console.log("caminho");
     var host = req.headers.host;
     if (!caminho) caminho = "home";
     if (!caminho || caminho == "undefined") return res.send({ msg: "no path" });
@@ -75,10 +75,19 @@ var Router = function Router(server, url_api) {
     if (!caminho || caminho == "undefined") return res.send({ msg: "no path" });
     tratarResposta(req, res, 0, caminho);
   });
+
+  server.get("/:caminho/a/:id_user", function (req, res) {
+    var caminho = req.params.caminho;
+    //   console.log(caminho);
+    var host = req.headers.host;
+    if (!caminho) caminho = "home";
+    if (!caminho || caminho == "undefined") return res.send({ msg: "no path" });
+    tratarResposta(req, res, 0, caminho);
+  });
   server.get("/key/:id_link/:caminho", function (req, res) {
     var caminho = "key";
     //   var id_link = req.params.id_link;
-    console.log(caminho);
+    // console.log(caminho);
     var host = req.headers.host;
     if (!caminho || caminho == "undefined") return res.send({ msg: "no path" });
     tratarResposta(req, res, 0, caminho, req.params.id_link);
@@ -117,6 +126,7 @@ var Router = function Router(server, url_api) {
       full_path: myURL.pathname,
       path: caminho,
       id_lead: id_lead,
+      cookies: req.cookies,
       query: query,
       cidade_data: cidade,
       estado: cidade.region ? cidade.region : "",
@@ -136,6 +146,9 @@ var Router = function Router(server, url_api) {
       // console.log({ ...body, html: null, html_publico: null });
       ///
       // if (body && !body.html_publico) body.html = body.html_publico;
+      if (body && body.cookie_lead) res.cookie("lead", body.cookie_lead);
+      if (body && body.cookie_aff) res.cookie("aff", body.cookie_aff);
+
       if (body && body.redirect) {
         res.redirect(302, body.redirect);
       } else if (body && body.html) {

@@ -1,45 +1,52 @@
-
-var express =require( "express");
+import express from "express";
 var fileUpload = require("express-fileupload");
 var bodyParser = require("body-parser");
-var request = require("request");
 var fs = require("fs");
-var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
-const Gets = require("./gets.js");
-const PORT = process.env.PORT || 5000
+var http = require("http");
+var https = require("https");
 var cookieParser = require("cookie-parser");
 import * as TesteRota from "./teste_rotas";
-import Checkout from "./checkout.js";
-
 var server = express();
 server.use(express.static("public"));
 server.use(cookieParser());
+// var url = require("url");
+var querystring = require("querystring");
+var request = require("request");
+var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
+import * as Util from "./uteis";
+var httpProxy = require("http-proxy");
+import Ead from "./ead.js";
+import Checkout from "./checkout.js";
+import Gets from "./gets.js";
+import Posts from "./posts.js";
+const PORT = process.env.PORT || 5000;
+
+var proxy = httpProxy.createProxyServer({});
 var url = "https://api-site.1mk.digital";
 
+let intervalo = null;
 
-let intervalo=null;
-
-function notSleep(host){
-  intervalo=setInterval(() => {
+function notSleep(host) {
+  intervalo = setInterval(() => {
     var options = {
       method: "GET",
-      url: "https://"+host+"/ip"
+      url: "https://" + host + "/ip"
     };
     request(options, (error, response, body) => {
       console.log(body, error);
     });
-  }, 1000*60*14);
+  }, 1000 * 60 * 14);
 }
-
 
 server.get("/start", function(req, res) {
   notSleep(req.headers.host);
-  res.send("start setInterval host: "+req.headers.host);
+  res.send("start setInterval host: " + req.headers.host);
 });
 server.get("/end", function(req, res) {
   clearInterval(intervalo);
-  res.send("end setInterval host: "+req.headers.host);
+  res.send("end setInterval host: " + req.headers.host);
 });
+
 server.use(
   fileUpload({
     limits: {
@@ -54,7 +61,6 @@ server.use(
   })
 );
 
-
 server.use("*", function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -68,8 +74,6 @@ server.use("*", function(req, res, next) {
   return next();
 });
 
-
-
 server.get("/teste-ip", function(req, res) {
   res.send({
     cidade: TesteRota.getCidade(req),
@@ -78,7 +82,6 @@ server.get("/teste-ip", function(req, res) {
     remoteAddress: req.connection.remoteAddress
   });
 });
-
 
 server.get("/robots.txt", (req, res) => {
   var dominio = req.query.dominio;
@@ -103,6 +106,11 @@ server.get("/manifest.json", (req, res) => {
   res.send(data);
 });
 
+new Ead(server, url);
+new Checkout(server, url);
+new Gets(server, url);
+new Posts(server, url);
+
 server.get("/site_map.xml", (req, res) => {
   var dominio = req.host;
   var url_back = url + "/site_map.xml?dominio=" + encodeURI(dominio);
@@ -111,7 +119,7 @@ server.get("/site_map.xml", (req, res) => {
     url: url_back,
     method: "GET"
   };
-    console.log(data);
+  //   console.log(data);
   request(data, function(error, response, body) {
     if (error || response.statusCode != 200) {
       res.status(500).send(body);
@@ -123,10 +131,69 @@ server.get("/site_map.xml", (req, res) => {
   });
 });
 
+///
+///
+////
+////RESTO
+////
+////
+server.get("/*", (req, res) => {
+  res.write(html_erro);
+  res.end();
+});
 
-new Gets(server, url);
+server.post("/*", (req, res) => {
+  res.send({ error: "Caminho não mapeado" });
+});
 
-new Checkout(server, url);
+//
+////
+////
+////Certificados
+////
+///
 
+if (true || url.indexOf("localhost") >= 0) {
+  console.log("server: 5003", url);
+  server.listen(PORT);
+} else {
+  // server.listen(5000);
+  console.log = () => {};
+  var greenlock = require("greenlock-express").create({
+    server: "https://acme-v02.api.letsencrypt.org/directory",
+    version: "draft-11",
+    configDir: "~/.config/acme/",
+    approveDomains: approveDomains,
+    app: server,
+    communityMember: true,
+    renewWithin: 91 * 24 * 60 * 60 * 1000,
+    renewBy: 90 * 24 * 60 * 60 * 1000,
+    debug: false
+  });
+  if (!process.env.PORT) {
+    require("http")
+      .createServer(greenlock.middleware(require("redirect-https")()))
+      .listen(80, function() {
+        console.log("Listening for ACME http-01 challenges on", this.address());
+      });
+    require("https")
+      .createServer(greenlock.httpsOptions, greenlock.middleware(server))
+      .listen(443, function() {
+        console.log(
+          "Listening for ACME tls-sni-01 challenges and serve app on",
+          this.address()
+        );
+      });
+  }
+}
 
-server.listen(PORT);
+function approveDomains(opts, certs, cb) {
+  if (certs) {
+    opts.domains = certs.altnames;
+  } else {
+    opts.email = "suporte@1app.com.br";
+    opts.agreeTos = true;
+  }
+
+  cb(null, { options: opts, certs: certs });
+}

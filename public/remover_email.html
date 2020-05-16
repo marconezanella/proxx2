@@ -1,0 +1,49 @@
+<!doctype html >
+	<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Remover Email</title>
+    <!-- Bootstrap core CSS -->
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="signin.css" rel="stylesheet">
+</head>
+
+<script>
+function myFunction() {
+	// alert(window.location.pathname+"/confirma")
+    // window.location.href = window.location.href+"/confirma" 
+
+    $.post(  window.location.href, { }) .done(function( data ) {
+      alert("ok, removido")
+    }) .fail(function(data) {
+      console.log(data)
+  
+  })
+
+}
+</script>
+
+<body class="text-center">
+
+	<main role="main" class="container">
+    <form   class="form-signin ">
+        <h1 class="h3 mb-3 font-weight-normal">REMOVER EMAIL</h1>
+      
+        <button onclick="myFunction()" class="btn btn-lg btn-primary btn-block" type="submit">SIM</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2018-2019</p>
+    </form>
+    </main>
+
+
+    
+</body>
+<script src="//code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+</html>

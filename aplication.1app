@@ -1,0 +1,9 @@
+{
+    "entidade": "aplication",
+    "status": 1,
+    "path": "/Users/developer/projects/info/vendas/",
+    "rewriteGlobalStyles": true,
+    "rewriteIndexPages": false,
+    "type": "cloud",
+    "name": "vendas"
+}
