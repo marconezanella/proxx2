@@ -9,7 +9,7 @@ import * as TesteRota from "./teste_rotas";
 var server = express();
 server.use(express.static("public"));
 server.use(cookieParser());
-// var url = require("url");
+let isdebug=process.argv[2] == "debug";
 var querystring = require("querystring");
 var request = require("request");
 var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
@@ -153,8 +153,8 @@ server.post("/*", (req, res) => {
 ////
 ///
 
-if (true || url.indexOf("localhost") >= 0) {
-  console.log("server: 5003", url);
+if (isdebug) {
+  console.log("server: 5000", url);
   server.listen(PORT);
 } else {
   // server.listen(5000);
@@ -185,7 +185,7 @@ if (true || url.indexOf("localhost") >= 0) {
         );
       });
   }
-// } 
+// }
 
 function approveDomains(opts, certs, cb) {
   if (certs) {
