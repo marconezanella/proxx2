@@ -158,7 +158,7 @@ server.post("/*", (req, res) => {
 ////
 ///
 
-if (isdebug) {
+if (isdebug || PORT!==5000) {
   console.log("server: 5000", url);
   server.listen(PORT);
 } else {
