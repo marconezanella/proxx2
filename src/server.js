@@ -33,7 +33,7 @@ function notSleep(host) {
       url: "https://" + host + "/ip"
     };
     request(options, (error, response, body) => {
-      console.log(body, error);
+      console.log(body, error,3);
     });
   }, 1000 * 60 * 14);
 }
