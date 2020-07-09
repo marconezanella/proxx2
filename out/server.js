@@ -42,7 +42,7 @@ var cookieParser = require("cookie-parser");
 var server = (0, _express2["default"])();
 server.use(_express2["default"]["static"]("public"));
 server.use(cookieParser());
-// var url = require("url");
+var isdebug = process.argv[2] == "debug";
 var querystring = require("querystring");
 var request = require("request");
 var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
@@ -157,9 +157,14 @@ server.get("/site_map.xml", function (req, res) {
 ////RESTO
 ////
 ////
+// server.get("/*", (req, res) => {
+//   res.write(html_erro);
+//   res.end();
+// });
 server.get("/*", function (req, res) {
-  res.write(html_erro);
-  res.end();
+  return res.redirect(302, "/home");
+  // res.write(html_erro);
+  // res.end();
 });
 
 server.post("/*", function (req, res) {
@@ -173,8 +178,8 @@ server.post("/*", function (req, res) {
 ////
 ///
 
-if (true || url.indexOf("localhost") >= 0) {
-  console.log("server: 5003", url);
+if (isdebug) {
+  console.log("server: 5000", url);
   server.listen(PORT);
 } else {
   // server.listen(5000);

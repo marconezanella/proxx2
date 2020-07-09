@@ -137,9 +137,14 @@ server.get("/site_map.xml", (req, res) => {
 ////RESTO
 ////
 ////
+// server.get("/*", (req, res) => {
+//   res.write(html_erro);
+//   res.end();
+// });
 server.get("/*", (req, res) => {
-  res.write(html_erro);
-  res.end();
+  return res.redirect(302, "/home");
+  // res.write(html_erro);
+  // res.end();
 });
 
 server.post("/*", (req, res) => {

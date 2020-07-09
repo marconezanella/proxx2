@@ -1,10 +1,11 @@
 import * as Util from "./uteis";
+import md5 from "md5";
+import * as TesteRota from "./teste_rotas";
 var request = require("request");
 var fs = require("fs");
 var cookieParser = require("cookie-parser");
 var url = require("url");
 var querystring = require("querystring");
-import * as TesteRota from "./teste_rotas";
 var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
 
 export default class Router {
@@ -13,28 +14,28 @@ export default class Router {
     ///
     ///
     server.get("/*.css", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.html", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.js", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.ico", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.png", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.json", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.jpeg", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
     server.get("/*.jpg", (req, res) => {
-      res.status(500).send('nao');
+      res.status(500).send("nao");
     });
 
     ////
@@ -69,6 +70,16 @@ export default class Router {
         return res.send({ msg: "no path" });
       tratarResposta(req, res, 0, caminho);
     });
+    server.get("/pay/fatura/:id_pagamento", (req, res) => {
+      var caminho = "/pay/fatura";
+      var id_pagamento = req.params.id_pagamento;
+      console.log(caminho);
+      var host = req.headers.host;
+      if (!caminho) caminho = "home";
+      if (!caminho || caminho == "undefined")
+        return res.send({ msg: "no path" });
+      tratarResposta(req, res, 0, caminho, id_pagamento);
+    });
     server.get("/key/:id_link/:caminho", (req, res) => {
       var caminho = "key";
       //   var id_link = req.params.id_link;
@@ -102,7 +113,7 @@ export default class Router {
       tratarResposta(req, res, id_lead, caminho);
     });
 
-    function montarDados(req, res, id_lead, caminho, callback) {
+    function montarDados(req, res, id_lead, caminho, id_link, callback) {
       var myURL = url.parse(req.url);
       //   console.log(myURL.query);
       var query = querystring.parse(myURL.query);
@@ -115,7 +126,8 @@ export default class Router {
         full_path: myURL.pathname,
         path: caminho,
         id_lead: id_lead,
-        cookies:req.cookies,
+        id_link,
+        cookies: req.cookies,
         query: query,
         cidade_data: cidade,
         estado: cidade.region ? cidade.region : "",
@@ -125,19 +137,30 @@ export default class Router {
         brasil: cidade && cidade.country == "BR" ? true : false,
         mobile: TesteRota.hasMobiel(req),
         device: TesteRota.deviceMobiel(req),
-        robo: TesteRota.testeRobo(req)
+        robo: TesteRota.testeRobo(req),
       };
       // console.log(data);
       carregarHtml(res, data, callback);
     }
     function tratarResposta(req, res, id_lead, caminho, id_link) {
-      montarDados(req, res, id_lead, caminho, body => {
+      montarDados(req, res, id_lead, caminho, id_link, (body) => {
         // console.log({ ...body, html: null, html_publico: null });
         ///
         // if (body && !body.html_publico) body.html = body.html_publico;
+        var cidade = TesteRota.getCidade(req);
+
         if (body && body.cookie_lead) res.cookie("lead", body.cookie_lead);
         if (body && body.cookie_aff) res.cookie("aff", body.cookie_aff);
-
+        if (cidade && cidade.ip) res.cookie("ip", cidade.ip);
+        if (cidade && cidade.ip) res.cookie("hasip", md5(cidade.ip));
+        if (req.cookies && !req.cookies.hashuser) {
+          var user = "";
+          for (var i = 0; i < 10; i++) {
+            user += Math.random() + "";
+          }
+          res.cookie("hashuser", md5(user));
+        }
+console.log(caminho,"nao encontrou")
         if (body && body.redirect) {
           res.redirect(302, body.redirect);
         } else if (body && body.html) {
@@ -161,13 +184,16 @@ export default class Router {
           res.write(body.html);
           res.end();
         } else {
+          // console.log(caminho,"nao encontrou")
+          if (caminho != "home") return res.redirect(302, "/home");
           res.write(html_erro);
           res.end();
         }
       });
       //   res.send(data);
     }
-
+    ///cockies ip
+    //rdirecioner erro home
     function carregarHtml(res, data, callback) {
       //   url_1mk_get = "http://localhost:5000/rota_dinamica";
       //   console.log(url_1mk_get)
@@ -175,14 +201,18 @@ export default class Router {
         {
           url: url_api + "/rota_dinamica_get",
           method: "POST",
-          json: data
+          json: data,
         },
-        function(error, response, body) {
-          // console.log({body,html:" carregarHtml get",html_publico:""});
-          if (error || response.statusCode != 200) {
-            callback(null, body);
-          } else {
-            callback(body);
+        function (error, response, body) {
+          // console.log(body);
+          try {
+            if (error || response.statusCode != 200) {
+              callback(null, body);
+            } else {
+              callback(body);
+            }
+          } catch (e) {
+            console.log(e);
           }
         }
       );
