@@ -102,7 +102,7 @@ export default class Router {
 
           // res.write(JSON.stringify(body));
           try {
-            // if (body.id_lead) gravarCookie(res, body.id_lead);
+            if (body.id_lead) gravarCookie(res, body.id_lead);
             if (body.html) {
               res.write(body.html);
               res.end();

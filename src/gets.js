@@ -160,7 +160,15 @@ export default class Router {
           }
           res.cookie("hashuser", md5(user));
         }
-console.log(caminho,"nao encontrou")
+        if (req.cookies && !req.cookies.unic_token) {
+          var user = "";
+          for (var i = 0; i < 10; i++) {
+            user += Math.random() + "";
+          }
+          var unic_token = Util.makeToken({ unic_token: md5(user) });
+          res.cookie("unic_token", unic_token);
+        }
+
         if (body && body.redirect) {
           res.redirect(302, body.redirect);
         } else if (body && body.html) {
