@@ -1,11 +1,11 @@
 import * as Util from "./uteis";
-import md5 from "md5";
-import * as TesteRota from "./teste_rotas";
 var request = require("request");
 var fs = require("fs");
 var cookieParser = require("cookie-parser");
 var url = require("url");
 var querystring = require("querystring");
+import md5 from "md5";
+import * as TesteRota from "./teste_rotas";
 var html_erro = fs.readFileSync("./public-error/erro.html", "utf8");
 
 export default class Router {
@@ -149,7 +149,9 @@ export default class Router {
         // if (body && !body.html_publico) body.html = body.html_publico;
         var cidade = TesteRota.getCidade(req);
 
+        if (body && body.cookie_all) res.cookie("all", body.cookie_all);
         if (body && body.cookie_lead) res.cookie("lead", body.cookie_lead);
+        if (body && body.cookie_link) res.cookie("link", body.cookie_link);
         if (body && body.cookie_aff) res.cookie("aff", body.cookie_aff);
         if (cidade && cidade.ip) res.cookie("ip", cidade.ip);
         if (cidade && cidade.ip) res.cookie("hasip", md5(cidade.ip));
@@ -165,14 +167,21 @@ export default class Router {
           for (var i = 0; i < 10; i++) {
             user += Math.random() + "";
           }
-          var unic_token = Util.makeToken({ unic_token: md5(user) });
+            var unic_token = Util.makeToken({
+            unic_token: md5(user),
+            ip: cidade.ip,
+          });
           res.cookie("unic_token", unic_token);
         }
 
+        // console.log(caminho, "nao encontrou");
         if (body && body.redirect) {
+          console.log(caminho, "REDIRECT");
           res.redirect(302, body.redirect);
         } else if (body && body.html) {
+          console.log(caminho, "HTML");
           try {
+            console.log(caminho, "HTML2");
             if (req.originalUrl && req.originalUrl.indexOf(".js") > 0) {
               res.header(
                 "Content-Type",
@@ -187,13 +196,15 @@ export default class Router {
               res.header("Content-Type", "text/html; charset=utf-8");
             }
           } catch (e) {
+            console.log(caminho, "HTML3");
+
             console.log(e);
           }
           res.write(body.html);
           res.end();
         } else {
           // console.log(caminho,"nao encontrou")
-          if (caminho != "home") return res.redirect(302, "/home");
+          // if (caminho != "home") return res.redirect(302, "/home");
           res.write(html_erro);
           res.end();
         }
