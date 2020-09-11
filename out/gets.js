@@ -64,6 +64,16 @@ var Router = function Router(server, url_api) {
   ////
   //// DINAMICOS
   ////
+  server.get("/formulario/v1/:id_etapa", function (req, res) {
+    // console.log("\n\n\n\n/formulario/v1/:id_etapa\n\n\n\n");
+    var caminho = "/form/a";
+    var id_etapa = req.params.id_etapa;
+    // console.log("\n\n", caminho, id_etapa);
+    var host = req.headers.host;
+    if (!caminho) caminho = "home";
+    if (!caminho || caminho == "undefined") return res.send({ msg: "no path" });
+    tratarResposta(req, res, 0, caminho, id_etapa);
+  });
 
   server.get("/", function (req, res) {
     var caminho = req.params.caminho;
