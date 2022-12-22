@@ -21,7 +21,7 @@
     "geoip-lite": "^1.4.1",
     "greenlock-express": "2.6.7",
     "http-proxy": "^1.18.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "md5": "^2.2.1",
     "mobile-detect": "^1.4.4",
     "moment": "^2.24.0",
